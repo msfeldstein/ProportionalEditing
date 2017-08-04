@@ -10,6 +10,7 @@
     "budo": "^10.0.4",
     "glsl-easings": "^1.0.0",
     "glslify": "^6.1.0",
-    "three": "^0.86.0"
+    "three": "^0.86.0",
+    "three-vive-controller": "^1.4.1"
   }
 }
