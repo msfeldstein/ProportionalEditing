@@ -1,21 +1,19 @@
+const glslify = require('glslify')
 const Shader = {}
 
-Shader.vertexShader = `
+Shader.vertexShader = glslify`
 uniform vec3 cursorPosition;
 uniform float cursorSize;
 uniform vec3 cursorTransform;
 
 varying float strength;
-varying float N;
 varying vec4 modelViewPosition;
+
+#pragma glslify: ease = require(glsl-easings/quadratic-in-out)
+
 void main() {
-  vec3 transformedNormal = normalMatrix * normal;
-  vec3 light = vec3(100.0, 100.0, 100.0);
-  float diffuseCoefficient = max(0.0, dot(normalize(transformedNormal), normalize(light)));
-  N = diffuseCoefficient;
-  
-  gl_PointSize = 5.0;
   strength = max(0.0, 1.0 - distance(position, cursorPosition) / cursorSize);
+  strength = ease(strength);
   modelViewPosition = modelViewMatrix * vec4(position + cursorTransform * strength, 1.0);
 	gl_Position = projectionMatrix * modelViewPosition;
   gl_PointSize = 2.0 + strength * 3.0;

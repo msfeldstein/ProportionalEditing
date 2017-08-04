@@ -4,10 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "budo index.js -o -l"
+    "start": "budo index.js -o -l -- -t glslify"
   },
   "dependencies": {
     "budo": "^10.0.4",
+    "glsl-easings": "^1.0.0",
+    "glslify": "^6.1.0",
     "three": "^0.86.0"
   }
 }

@@ -11,7 +11,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 camera.position.z = 10
 camera.position.x = 10
 camera.lookAt(new THREE.Vector3())
-const sphereGeo = new THREE.IcosahedronBufferGeometry(3, 4)
+const sphereGeo = new THREE.IcosahedronBufferGeometry(3,5)
 const sphereMat = new THREE.ShaderMaterial({
   vertexShader: PointShader.vertexShader,
   fragmentShader: PointShader.meshFragmentShader,
