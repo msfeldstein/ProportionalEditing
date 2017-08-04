@@ -1,6 +1,7 @@
 window.THREE = require('three')
 const PointShader = require('./ProportionalPointsMaterial')
-
+const Easings = require('./easings')
+window.Easings = Easings
 window.scene = new THREE.Scene()
 window.renderer = new THREE.WebGLRenderer({antialias: true})
 document.body.appendChild(renderer.domElement)
@@ -61,9 +62,18 @@ var plane = new THREE.Mesh(
   new THREE.MeshBasicMaterial()
 )
 
-function setUniform(name, value) {
-  pointsMaterial.uniforms[name].value = value
-  sphereMat.uniforms[name].value = value
+function setUniform(name, x, y, z) {
+  if (x instanceof THREE.Vector3) {
+    pointsMaterial.uniforms[name].value.copy(x)
+    sphereMat.uniforms[name].value.copy(x)
+  } else if (y !== undefined) {
+    pointsMaterial.uniforms[name].value.set(x, y, z)
+    sphereMat.uniforms[name].value.set(x, y, z)
+  } else {
+    pointsMaterial.uniforms[name].value = x
+    sphereMat.uniforms[name].value = x
+  }
+  
 }
 
 window.addEventListener('wheel', function(e) {
@@ -76,6 +86,7 @@ window.addEventListener('wheel', function(e) {
 
 const downVec = new THREE.Vector3()
 var isDown = false;
+const currentTransform = new THREE.Vector3()
 window.addEventListener('mousemove', function(event) {
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -86,11 +97,10 @@ window.addEventListener('mousemove', function(event) {
   }
   
   if (isDown) {
-    pointsMaterial.uniforms.cursorTransform.value.subVectors(cursor.position, downVec)
-    sphereMat.uniforms.cursorTransform.value.subVectors(cursor.position, downVec)
+    currentTransform.subVectors(cursor.position, downVec)
+    setUniform('cursorTransform', currentTransform)
   } else {
-    pointsMaterial.uniforms.cursorPosition.value.copy(cursor.position)
-    sphereMat.uniforms.cursorPosition.value.copy(cursor.position)
+    setUniform('cursorPosition', cursor.position.x, cursor.position.y, cursor.position.z)
   }
 })
 
@@ -101,11 +111,38 @@ window.addEventListener('mousedown', function(e) {
 })
 
 window.addEventListener('mouseup', function() {
+  applyTransformation()
+  
   isDown = false
   downVec.set(0, 0, 0)
-  pointsMaterial.uniforms.cursorTransform.value.set(0, 0, 0)
-  sphereMat.uniforms.cursorTransform.value.set(0, 0, 0)
+  setUniform('cursorTransform', 0, 0, 0)
 })
+
+var tmpV3 = new THREE.Vector3()
+function dist(x1, y1, z1, x2, y2, z2) {
+  return Math.sqrt(
+    (x2 - x1) * (x2 - x1) +
+    (y2 - y1) * (y2 - y1) +
+    (z2 - z1) * (z2 - z1)
+  )  
+}
+
+function applyTransformation() {
+  const positions = sphereGeo.attributes.position.array
+  console.log(positions.length)
+  for (var i = 0; i < positions.length; i += 3) {
+    var d = dist(
+      positions[i], positions[i + 1], positions[i + 2],
+      downVec.x, downVec.y, downVec.z
+    )
+    var strength = Math.max(0, 1 - d / cursor.scale.x)
+    strength = Easings.easeInOutQuad(strength)
+    positions[i] += currentTransform.x * strength
+    positions[i + 1] += currentTransform.y * strength
+    positions[i + 2] += currentTransform.z * strength
+  }
+  sphereGeo.attributes.position.needsUpdate = true
+}
 
 
 
