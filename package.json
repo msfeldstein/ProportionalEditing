@@ -1,0 +1,13 @@
+{
+  "name": "ProportionalEditing",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "budo index.js -o -l"
+  },
+  "dependencies": {
+    "budo": "^10.0.4",
+    "three": "^0.86.0"
+  }
+}
