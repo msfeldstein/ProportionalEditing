@@ -1,25 +1,12 @@
-const USEVR = false
-
-window.THREE = require('three')
+window.USEVR = false
+require('./boilerplate')
 const PointShader = require('./ProportionalPointsMaterial')
 const Easings = require('./easings')
-const WEBVR = require('./WEBVR')
+
 const ViveController = require('three-vive-controller')(THREE)
-
-window.scene = new THREE.Scene()
-window.renderer = new THREE.WebGLRenderer({antialias: true})
-renderer.vr.enabled = true
-
 var controller = new ViveController(0, renderer.vr)
 scene.add(controller)
 
-document.body.appendChild(renderer.domElement)
-document.body.style.margin = 0
-renderer.setSize(window.innerWidth, window.innerHeight)
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000)
-camera.position.z = 5
-camera.position.x = 5
-camera.lookAt(new THREE.Vector3())
 const sphereGeo = new THREE.IcosahedronBufferGeometry(0.5,7)
 const sphereMat = new THREE.ShaderMaterial({
   vertexShader: PointShader.vertexShader,
@@ -176,25 +163,9 @@ function applyTransformation() {
   sphereGeo.attributes.position.needsUpdate = true
 }
 
-function render() {
+beforeRender(() => {
   if (controller.connected) {
     cursor.position.copy(controller.position)  
   }
   updateCursor()
-  renderer.render(scene, camera)
-}
-renderer.animate( render );
-// if (USEVR) {
-//   renderer.animate( render );
-// 
-//   WEBVR.getVRDisplay( function ( display ) {
-//     renderer.vr.setDevice( display );
-//     document.body.appendChild( WEBVR.getButton( display, renderer.domElement ) );
-//   } );  
-// } else {
-//   function animate() {
-//     requestAnimationFrame(animate)
-//     render()
-//   }
-//   animate()
-// }
+})
