@@ -12,7 +12,8 @@ varying vec4 modelViewPosition;
 #pragma glslify: ease = require(glsl-easings/quadratic-in-out)
 
 void main() {
-  strength = max(0.0, 1.0 - distance(position, cursorPosition) / cursorSize);
+  vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+  strength = max(0.0, 1.0 - distance(modelPosition.xyz, cursorPosition) / cursorSize);
   strength = ease(strength);
   modelViewPosition = modelViewMatrix * vec4(position + cursorTransform * strength, 1.0);
 	gl_Position = projectionMatrix * modelViewPosition;

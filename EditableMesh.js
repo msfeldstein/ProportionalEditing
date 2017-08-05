@@ -93,7 +93,7 @@ class EditableMesh extends THREE.Object3D {
     const positions = this.geometry.attributes.position.array
     for (var i = 0; i < positions.length; i += 3) {
       var d = dist(
-        positions[i], positions[i + 1], positions[i + 2],
+        positions[i] + this.position.x, positions[i + 1] + this.position.y, positions[i + 2] + this.position.z,
         this.downPosition.x, this.downPosition.y, this.downPosition.z
       )
       var strength = Math.max(0, 1 - d / this.effectRadius)
