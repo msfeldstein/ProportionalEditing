@@ -5,6 +5,7 @@ module.exports = function(editableMesh) {
       transparent: true,
       color: 'white',
       opacity: 0.5,
+      wireframe: true,
       depthWrite: false
     })
   )
@@ -15,6 +16,6 @@ module.exports = function(editableMesh) {
   }
   cursor.setScale(0.2)
   scene.add(cursor)
-  
+
   return cursor
 }
